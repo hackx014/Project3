@@ -20,15 +20,15 @@ JPEG_CONTENT_TYPE = 'image/jpeg'
 # Based on https://knowledge.udacity.com/questions/801129 I was getting the same model error the mentor in this question suggested to look at documentation from https://sagemaker.readthedocs.io/en/stable/frameworks/pytorch/using_pytorch.html#load-a-model. Code taken from the project 4 inference file.
 
 def Net():
-    model = models.resnet50(pretrained=True)
-
+    model = models.resnet50(pretrained = True)
     for param in model.parameters():
-        param.requires_grad = False   
-
-    model.fc = nn.Sequential(
-                   nn.Linear(2048, 128),
-                   nn.ReLU(inplace=True),
-                   nn.Linear(128, 133))
+        param.requires_grad = False
+    num_features = model.fc.in_features
+    model.fc = nn.Sequential( nn.Linear( num_features, 256), 
+                             nn.ReLU(inplace = True),
+                             nn.Linear(256, 133),
+                             nn.ReLU(inplace = True) 
+                            )
     return model
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
